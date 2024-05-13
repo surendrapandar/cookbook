@@ -1,12 +1,12 @@
 import logo from "../img/logo.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/auth/AuthContext";
 import { useContext } from "react";
 import { Button } from "./ui/button";
 
 const Navbar = () => {
   const { token } = useContext(AuthContext);
-
+  const navigate = useNavigate();
   return (
     <nav className="bg-gray-800 p-4 flex justify-between items-center">
       <div className="flex items-center space-x-4">
@@ -35,6 +35,7 @@ const Navbar = () => {
               onClick={() => {
                 localStorage.removeItem("token");
                 window.location.reload();
+                navigate("/")
               }}
             >
               Logout

@@ -2,7 +2,7 @@ import Navbar from "@/components/Navbar";
 import React, { useState, useEffect, useRef } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { v4 as uuidv4 } from "uuid";
+import { useNavigate } from "react-router-dom";
 
 interface Recipe {
   name: string;
@@ -14,6 +14,7 @@ interface Recipe {
 }
 
 const RecipeCreator: React.FC = () => {
+  const navigate = useNavigate()
   const [recipe, setRecipe] = useState<Recipe>({
     name: "",
     instructions: "",
@@ -57,14 +58,26 @@ const RecipeCreator: React.FC = () => {
     setRecipe({ ...recipe, instructions: value });
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (quillRef.current?.getEditor().getText().trim() === '') {
         alert('Instructions are required.');
         return;
       }
-    // Add logic to submit recipe data
-    console.log(recipe);
+
+    const token = localStorage.getItem("token")
+
+    await fetch("http://localhost:3000/recipes", {
+      method: "POST",
+      headers: {
+        Authorization:
+        `Bearer ${token}`,
+        "Content-Type": "application/json",
+        },
+      body: JSON.stringify(recipe),
+    })
+
+    navigate("/recipes")
   };
       
 
@@ -114,7 +127,7 @@ const RecipeCreator: React.FC = () => {
             required
           />
         </div>
-        <div>
+        {/* <div>
           <label htmlFor="postedAt" className="block mb-1">
             Posted At (Date):
           </label>
@@ -128,7 +141,7 @@ const RecipeCreator: React.FC = () => {
             autoComplete="off"
             required
           />
-        </div>
+        </div> */}
         <div>
           <label htmlFor="postedBy" className="block mb-1">
             Author Name (Full Name):
