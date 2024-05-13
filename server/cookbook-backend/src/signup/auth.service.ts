@@ -1,7 +1,13 @@
-import { ConflictException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UserModle } from './signup.interface';
 import { InjectModel } from '@nestjs/sequelize';
 import { JwtService } from '@nestjs/jwt';
+import { RecipeModel } from 'src/recipes/recipes.model';
 
 @Injectable()
 export class AuthService {
@@ -25,11 +31,17 @@ export class AuthService {
 
   async login(email: string, password: string) {
     try {
-      const user = await this.userModel.findOne({where: {email, password}});
-      const payload = {id: user.id, email: user.email, username: user.username};
-      console.log(await this.jwtService.signAsync(payload))
+      const user = await this.userModel.findOne({
+        where: { email, password },
+      });
+      const payload = {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+      };
+      console.log(await this.jwtService.signAsync(payload));
       return {
-        access_token: await this.jwtService.signAsync(payload)
+        access_token: await this.jwtService.signAsync(payload),
       };
     } catch (error) {
       throw new UnauthorizedException('Invalid credentials');

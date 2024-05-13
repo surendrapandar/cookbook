@@ -4,11 +4,12 @@ import { AppService } from './app.service';
 import { LoginController } from './login/login.controller';
 import { DatabaseModule } from './db/db.module';
 import { SignupModule } from './signup/signup.module';
-import { FavouriteController } from './favourite/favourite.controller';
+import { RecipesModule } from './recipes/recipes.module';
+import { FavouriteRecipeModule } from './favourite/favouriteRecipes.module';
 
 @Module({
-  imports: [SignupModule,DatabaseModule],
-  controllers: [AppController, LoginController, FavouriteController],
+  imports: [SignupModule,DatabaseModule, RecipesModule, FavouriteRecipeModule],
+  controllers: [AppController, LoginController],
   providers: [AppService],
 })
 export class AppModule {}

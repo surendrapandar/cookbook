@@ -1,12 +1,14 @@
 import { Optional } from 'sequelize';
 import {
   AutoIncrement,
+  BelongsToMany,
   Column,
   Model,
   PrimaryKey,
   Table,
 } from 'sequelize-typescript';
-
+import { FavouriteRecipeModel } from 'src/favourite/favouriteRecipes.model';
+import { RecipeModel } from 'src/recipes/recipes.model';
 
 export interface User {
   id: number;
@@ -27,9 +29,14 @@ export class UserModle extends Model<User, userAttribute> {
   @Column
   username: string;
 
-  @Column({unique: true})
+  @Column({ unique: true })
   email: string;
 
   @Column
   password: string;
+
+  @BelongsToMany(() => RecipeModel, {
+    through: () => FavouriteRecipeModel,
+  })
+  favouritRecipe: RecipeModel[];
 }
