@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import recipe_hero_img from "../img/recipe_hero_img.webp";
 
 type Recipe = {
+  id: number;
   name: string;
   thumbnailImage: string;
 };
@@ -46,6 +47,7 @@ const RecipesPage = () => {
         {recipes.map((recipe) => (
           <RecipesCard
             key={recipe.name}
+            id={recipe.id}
             name={recipe.name}
             thumbnailImage={recipe.thumbnailImage}
           />

@@ -18,6 +18,12 @@ export class RecipesController {
   getRecipes() {
     return this.RecipeService.getRecipes();
   }
+  @UseGuards(AuthGuard)
+  @Post('/getbyid')
+  getRecipesById(@Body() body) {
+    console.log(body);
+    return this.RecipeService.getRecipesById(body.id);
+  }
 
   @UseGuards(AuthGuard)
   @Post()

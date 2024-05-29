@@ -7,15 +7,15 @@ import { RecipeService } from "src/recipes/recipes.service";
 export class FavouriteRecipeService {
     constructor(private RecipeService: RecipeService,@InjectModel(FavouriteRecipeModel) private readonly FavModel : typeof FavouriteRecipeModel){}
 
-    async getAllFavourite(){
+    async getAllFavourite(req){
         const data = await this.FavModel.findAll({
-            where: {userId: 1},
+            where: {userId: req.user.id},
         })
 
         const recipeIds = await Promise.all(data.map(async (data) => {
             return await this.RecipeService.getRecipesById(data.recipeId);
         }));
-        
+         
         
         return recipeIds;
         

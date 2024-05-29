@@ -34,8 +34,8 @@ const Navbar = () => {
               variant={"destructive"}
               onClick={() => {
                 localStorage.removeItem("token");
-                window.location.reload();
                 navigate("/")
+                window.location.reload();
               }}
             >
               Logout

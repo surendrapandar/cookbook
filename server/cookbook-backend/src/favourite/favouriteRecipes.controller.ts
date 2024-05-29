@@ -8,14 +8,14 @@ export class FavouriteController {
     constructor(private FavouriteRecipeService: FavouriteRecipeService) {}
 
   @UseGuards(AuthGuard)
-  @Post("/get")
-  getAllFavouritesRecipes(@Request() req) {
-    return this.FavouriteRecipeService.getAllFavourite()
+  @Get("/get")
+  async getAllFavouritesRecipes(@Request() req) {
+    return this.FavouriteRecipeService.getAllFavourite(req)
   }
 
   @UseGuards(AuthGuard)
   @Post()
-  createFavouriteRecipe(@Request() req){
+  async createFavouriteRecipe(@Request() req){
     return this.FavouriteRecipeService.createFavouriteRecipe(req)
   }
 

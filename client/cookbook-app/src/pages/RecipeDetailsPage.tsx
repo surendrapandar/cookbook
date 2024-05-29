@@ -1,49 +1,109 @@
 import Navbar from "@/components/Navbar";
-import recipe_hero_img from "../../src/img/recipe_hero_img.webp"
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import ReactQuill from "react-quill";
+
+type recipeType = {
+  id: number;
+  name: string;
+  description: string;
+  thumbnailImage: string;
+  ingredients: string;
+  instructions: string;
+  postedBy: string;
+  postedAt: string;
+};
 
 const RecipeDetailsPage = () => {
-  return(
+  const token = localStorage.getItem("token");
+  const { id } = useParams();
+
+  const [recipe, setRecipe] = useState<recipeType>();
+
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/recipes/getbyid", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token} `,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id: id }),
+        });
+        const data = await response.json();
+        console.log(data);
+        setRecipe(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchRecipes();
+  }, []);
+
+  const handleFavBtnClick = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/favourite", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token} `,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ recipeId: id }),
+      });
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {}
+  };
+
+  return (
     <div className="flex flex-col mx-20">
       <Navbar />
-      <div className="flex flex-col items-center text-white max-w-full mx-auto my-10">
-      <img
-        src={recipe_hero_img}
-        alt="Recipe"
-        className="rounded-lg shadow-lg"
-      />
-      <h1 className="text-3xl font-bold my-5">Delicious Chocolate Cake</h1>
-      <h2 className="text-2xl font-bold my-5">Instructions</h2>
-      <ol className="list-decimal list-inside bg-white text-black rounded-lg py-10 px-10">
-        <li>Preheat oven to 350°F (175°C).</li>
-        <li>Grease and flour a 9x13-inch pan.</li>
-        <li>In a large bowl, cream together butter and sugar until light and fluffy.</li>
-        <li>Beat in eggs one at a time, then stir in vanilla.</li>
-        <li>Combine flour, cocoa, baking soda, and salt; gradually add to the creamed mixture.</li>
-        <li>Spread evenly into the prepared pan.</li>
-        <li>Bake for 25 to 30 minutes in the preheated oven, until the cake tests done with a toothpick.</li>
-        <li>Cool in the pan on a wire rack.</li>
-        <li>Once cool, frost with your favorite frosting and enjoy!</li>
-      </ol>
-      <h2 className="text-2xl font-bold my-5">Ingredients</h2>
-      <ol className="list-disc list-inside bg-white text-black rounded-lg py-10 px-10">
-        <li>2 cups white sugar</li>
-        <li>1 3/4 cups all-purpose flour</li>
-        <li>3/4 cup unsweetened cocoa powder</li>
-        <li>1 1/2 teaspoons baking powder</li>
-        <li>1 1/2 teaspoons baking soda</li>
-        <li>1 teaspoon salt</li>
-        <li>2 eggs</li>
-        <li>1 cup milk</li>
-        <li>1/2 cup vegetable oil</li>
-        <li>2 teaspoons vanilla extract</li>
-        <li>1 cup boiling water</li>
-      </ol>
-       
-      <p className="pt-10">By John Doe</p>
-      <p className="">Posted on January 1, 2023</p>
+      {recipe && (
+        <div className="flex flex-col items-center text-white max-w-full mx-auto my-10">
+          <img
+            src={recipe.thumbnailImage}
+            alt="Recipe"
+            className="max-w-4xl  rounded-lg shadow-lg"
+          />
+          <h1 className="text-3xl font-bold my-5">{recipe.name}</h1>
+          <h2 className="text-2xl font-bold my-5">Instructions</h2>
+          <ol className=" max-w-4xl list-decimal list-inside bg-white text-black rounded-lg ">
+            <ReactQuill
+              value={recipe.instructions}
+              modules={{
+                toolbar: false,
+              }}
+              readOnly
+              theme="snow"
+              style={{
+                height: "200px",
+                width: "100%",
+                border: "none",
+              }}
+            />
+          </ol>
+          <h2 className="text-2xl font-bold my-5">Ingredients</h2>
+          <ol className="max-w-4xl list-disc list-inside bg-white text-black rounded-lg py-10 px-10">
+            {recipe.ingredients.split(",").map((ingredient, index) => (
+              <li key={index}>{ingredient.trim()}</li>
+            ))}
+          </ol>
+
+          <p className="pt-10">By {recipe.postedBy}</p>
+          <p className="">Posted on {recipe.postedAt.split("", 10)}</p>
+          <Button
+            onClick={() => handleFavBtnClick()}
+            className="mt-5 bg-green-600 hover:bg-orange-400"
+          >
+            Make it Favourit
+          </Button>
+        </div>
+      )}
     </div>
-    </div>
-  )
-}
+  );
+};
 
 export default RecipeDetailsPage;
